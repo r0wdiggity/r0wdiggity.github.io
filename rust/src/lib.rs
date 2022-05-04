@@ -17,6 +17,19 @@ struct Curves {
     one_min: [f32; 52],
     five_sec: [f32; 52],
 }
+impl Curves {
+    fn get_improvements(&self, weight: f32, threshold: f32, five_min: f32, one_min: f32, five_sec: f32) -> String {
+        let mut improvements = String::from("<tr><th>Category</th><th>Threshold</th><th>Five Minute</th><th>One Minute</th><th>Five Seconds</th></tr>");
+        for i in 0..constants::CATEGORIES.len() {
+            let t_i = (self.threshold[i] - (threshold / weight)) * weight;
+            let f_i = (self.five_min[i] - (five_min / weight)) * weight;
+            let o_i = (self.one_min[i] - (one_min / weight)) * weight;
+            let s_i = (self.five_sec[i] - (five_sec / weight)) * weight;
+            improvements.push_str(&format!("<tr><td>{}</td><td>{:.0}W</td><td>{:.0}W</td><td>{:.0}W</td><td>{:.0}W</td></tr>", constants::CATEGORIES[i], t_i, f_i, o_i, s_i));
+        }
+        improvements
+    }
+}
 
 struct PowerValue {
     data: [f32; 52],
@@ -80,15 +93,17 @@ pub fn calculate_power(weight: f32, threshold: f32, five_min: f32, one_min: f32,
         false =>  Curves {threshold: constants::FEMALE_THRESHOLD, five_min: constants::FEMALE_FIVE_MIN, one_min: constants::FEMALE_ONE_MIN, five_sec: constants::FEMALE_FIVE_SEC },
     };
 
-    let threshold = PowerValue{ data: curves.threshold, wpkg: threshold/weight, system: String::from("THRESHOLD")};
+    let threshold_s = PowerValue{ data: curves.threshold, wpkg: threshold/weight, system: String::from("THRESHOLD")};
 
-    let five_min = PowerValue{ data: curves.five_min, wpkg: five_min/weight, system: String::from("FIVE MINUTE")};
+    let five_min_s = PowerValue{ data: curves.five_min, wpkg: five_min/weight, system: String::from("FIVE MINUTE")};
 
-    let one_min = PowerValue{ data: curves.one_min, wpkg: one_min/weight, system: String::from("ONE MINUTE")};
+    let one_min_s = PowerValue{ data: curves.one_min, wpkg: one_min/weight, system: String::from("ONE MINUTE")};
 
-    let five_sec = PowerValue{ data: curves.five_sec, wpkg: five_sec/weight, system: String::from("FIVE SECOND")};
+    let five_sec_s = PowerValue{ data: curves.five_sec, wpkg: five_sec/weight, system: String::from("FIVE SECOND")};
 
-    format!("{}<br/>{}<br/>{}<br/>{}<br/>", threshold.category(), five_min.category(), one_min.category(), five_sec.category())
+    let improvements = curves.get_improvements(weight, threshold, five_min, one_min, five_sec);
+
+    format!("{}<br/>{}<br/>{}<br/>{}&&{}", threshold_s.category(), five_min_s.category(), one_min_s.category(), five_sec_s.category(), improvements)
 }
 
 
