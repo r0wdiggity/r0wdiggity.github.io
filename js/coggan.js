@@ -1,4 +1,4 @@
-import init, {calculate_power} from "../rust/pkg/rust.js";
+import init, {calculate_power} from "./rust.js";
 
 export function get_power_data(weight, threshold, five_min, one_min, five_sec, gender){
     weight = parseFloat(document.forms[0].elements["weight"].value)
