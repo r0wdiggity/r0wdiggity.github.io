@@ -103,7 +103,7 @@ pub fn calculate_power(weight: f32, threshold: f32, five_min: f32, one_min: f32,
 
     let improvements = curves.get_improvements(weight, threshold, five_min, one_min, five_sec);
 
-    format!("{}<br/>{}<br/>{}<br/>{}&&{}", threshold_s.category(), five_min_s.category(), one_min_s.category(), five_sec_s.category(), improvements)
+    format!("{}<br/>{}<br/>{}<br/>{} && {}", threshold_s.category(), five_min_s.category(), one_min_s.category(), five_sec_s.category(), improvements)
 }
 
 
